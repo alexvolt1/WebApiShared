@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -77,6 +78,11 @@ namespace MVC.Controllers
             return View();
         }
 
+        public IActionResult Create2()
+        {
+            return View();
+        }
+
         // POST: Menus/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -91,6 +97,39 @@ namespace MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(menu);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create2([Bind("Id,Name,Image")] Menu menu)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var myContent = JsonConvert.SerializeObject(menu);
+
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    //var result = await client.PostAsync(SD.ClientApiMenus, byteContent).Result;
+
+                    HttpClient client = _api.Initial();
+                    HttpResponseMessage res = await client.PostAsync(SD.ClientApiMenus, byteContent);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch(Exception ex)
+                {
+                    //System.Diagnostics.Debug.WriteLine("CAUGHT EXCEPTION:");
+                    //System.Diagnostics.Debug.WriteLine(ex);
+                }
+            }
+            return View(menu);
+
+
+
+
         }
 
         // GET: Menus/Edit/5

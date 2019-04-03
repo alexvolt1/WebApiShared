@@ -53,15 +53,16 @@ namespace Api.Controllers
        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Image")] Menu menu)
         {
-            Menu model = new Menu()
-            {
-                Name = "test77",
-                Image = "testUrl77"
-            };
+
+            //Menu model = new Menu()
+            //{
+            //    Name = "test77",
+            //    Image = "testUrl77"
+            //};
 
             if (ModelState.IsValid)
             {
-                _webApiSharedDbContext.Add(model);
+                _webApiSharedDbContext.Add(menu);
                 await _webApiSharedDbContext.SaveChangesAsync();
                 return Ok(menu);
             }
